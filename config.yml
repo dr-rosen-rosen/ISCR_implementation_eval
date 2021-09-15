@@ -1,0 +1,10 @@
+default:
+    #py_version: 'python3/bin/python'
+    data_path: 'data'
+    data_file: 'Cohort 3_3B_4_clean data set_6.28.21.xlsx'
+    output_path: 'output'
+    barrier_score_ITEM_by_time: 'Barrier_score_ITEM_by_Time.csv'
+    barrier_score_by_time: 'Barrier_score_by_Time.csv'
+    barrier_score_by_CATEGORY_by_time: 'Barrier_score_by_CATEGORY_by_Time.csv'
+    HQI_overTime: 'HQI_overTime.csv'
+    ORCA: 'ORCA_long.csv'

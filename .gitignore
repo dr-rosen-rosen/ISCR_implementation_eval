@@ -1,3 +1,21 @@
+# Randos
+**/.DS_Store
+
+# data files
+*.db
+*.xlsx
+*.csv
+
+/data/
+/output/
+/old/
+
+# Jupyter stuff
+
+**/.ipynb_checkpoints/
+# Virtual environment
+/python3/
+
 # History files
 .Rhistory
 .Rapp.history
