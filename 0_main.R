@@ -14,14 +14,22 @@ Sys.setenv(R_CONFIG_ACTIVE = "default")
 config <- config::get()
 #source(here("1_funcs.R"), echo = TRUE)
 
-x <- get_barriers_plot(
-  barrier_file = file.path(here(),config$output_path,config$barrier_score_by_time)
+barrier_figs <- get_barrier_plots(
+  barrier_item_file = file.path(here(),config$output_path,config$barrier_score_by_time),
+  barrier_cat_file = file.path(here(),config$output_path,config$barrier_score_by_CATEGORY_by_time)
 )
+show(barrier_figs$item)
+show(barrier_figs$cat)
 
-y <- get_HQI_plot(
+HQI_fig <- get_HQI_plot(
   HQI_file = file.path(here(),config$output_path,config$HQI_overTime)
 )
+show(HQI_fig)
 
-z <- get_ORCA_plot(
+
+ORCA_figs <- get_ORCA_plot(
   ORCA_file = file.path(here(),config$output_path,config$ORCA)
 )
+
+show(ORCA_figs$domain)
+show(ORCA_figs$service_line)

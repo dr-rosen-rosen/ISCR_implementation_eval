@@ -8,18 +8,31 @@ library('ggplot2')
 library(scales)
 library(tidyr)
 
-get_barriers_plot <- function(barrier_file) {
-  df_barriers <- read.csv(barrier_file, header = TRUE)
-  
-  #scaleFUN <- function(x) sprintf("%.2f", x)
-  
-  p <- ggplot(data = df_barriers, mapping = aes(x = administration, y = barrier_score)) +
+get_barrier_plots <- function(barrier_item_file,barrier_cat_file) {
+
+  df_barriers <- read.csv(barrier_item_file, header = TRUE)
+
+  p.item <- ggplot(data = df_barriers, mapping = aes(x = administration, y = barrier_score)) +
     geom_line() +
     facet_wrap(facets = vars(item)) +
     scale_x_discrete(name ="Survey administration", limits=c("1","2","3")) +
     scale_y_continuous(name= "% of responding facilities experiencing the barrier", labels =  label_percent(accuracy=1))#scales::percent)
     #theme_light()
-  return(p)
+  
+  df_barriers_cat <- read.csv(barrier_cat_file, header = TRUE)
+  df_barriers_cat$administration[df_barriers_cat$administration == 1] <- '4 months'
+  df_barriers_cat$administration[df_barriers_cat$administration == 2] <- '8 months'
+  df_barriers_cat$administration[df_barriers_cat$administration == 3] <- '12 months'
+  df_barriers_cat$administration <- ordered(df_barriers_cat$administration, levels =c('4 months','8 months','12 months'))
+  
+  p.cat <- ggplot(data = df_barriers_cat, aes(y=barrier_score, x = administration)) +
+    geom_bar(stat = 'identity') +
+    facet_wrap(facets = vars(Barrier_cat)) +
+    theme_light() +
+    scale_x_discrete(name ="Survey administration") +#, limits=c("1","2","3")) +
+    scale_y_continuous(name= "% of responding facilities experiencing barriers", labels =  label_percent(accuracy=1))#scales::percent)
+  
+  return(list(item = p.item, cat = p.cat))
 }
 
 get_HQI_plot <- function(HQI_file) {
@@ -70,22 +83,26 @@ get_ORCA_plot <- function(ORCA_file) {
   ORCA_long$ORCA_scale[ORCA_long$ORCA_scale == 'Overall_ORCA'] <- 'Overall ORCA'
   
   ORCA_long$`ORCA scale`<- as.factor(ORCA_long$ORCA_scale)
-  p <- ggplot(ORCA_long) + geom_boxplot(aes(x=ORCA_scale, y=Score)) + theme_light() +
+  p.domain <- ggplot(ORCA_long) + geom_boxplot(aes(x=ORCA_scale, y=Score)) + theme_light() +
     scale_x_discrete(name ="ORCA Domain") +
     scale_y_continuous(name= "Mean ORCA Score") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  return(p)
-  #ORCA_long2 <- gather(df_ORCA[c('Cohort','Overall_ORCA')], key = 'Cohort', value = 'Overall_ORCA')
   
-  # df_ORCA$Cohort[df_ORCA$Cohort == 'C2'] <- 'Colorectal'
-  # df_ORCA$Cohort[df_ORCA$Cohort == 'HF2'] <- 'Hip Fracture'
-  # df_ORCA$Cohort[df_ORCA$Cohort == 'TJ2'] <- 'Total Joint'
-  # 
-  # ggplot(df_ORCA) + geom_boxplot(aes(x=Cohort,y=Overall_ORCA)) + theme_light() +
-  #   scale_x_discrete(name ="Service Line") +
-  #   scale_y_continuous(name= "Mean Overall ORCA Score") +
-  #   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  #   scale_x_discrete(labels=c("C2" = "Colorectal", "HF2" = "Hip Fracture",
-  #                             "TJ2" = "Total Joint"))
+  ORCA_long2 <- gather(df_ORCA[c('Cohort','Overall_ORCA')], key = 'Cohort', value = 'Overall_ORCA')
   
+  df_ORCA$Cohort[df_ORCA$Cohort == 'C3'] <- 'Colorectal'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'C3B'] <- 'Colorectal'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'HF3'] <- 'Hip Fracture'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'HF3B'] <- 'Hip Fracture'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'TJ3'] <- 'Total Joint'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'TJ3B'] <- 'Total Joint'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'G3'] <- 'Gynecology'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'G3B'] <- 'Gynecology'
+   
+  p.service_line <- ggplot(df_ORCA) + geom_boxplot(aes(x=Cohort,y=Overall_ORCA)) + theme_light() +
+    scale_x_discrete(name ="Service Line") +
+    scale_y_continuous(name= "Mean Overall ORCA Score") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  
+  return(list(domain = p.domain, service_line = p.service_line))
 }
