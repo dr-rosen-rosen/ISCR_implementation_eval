@@ -5,6 +5,7 @@
 *.db
 *.xlsx
 *.csv
+*.ipynb
 
 /data/
 /output/
