@@ -96,12 +96,17 @@ get_ORCA_plot <- function(ORCA_file_C3, ORCA_file_C2) {
   
   df_ORCA$Cohort[df_ORCA$Cohort == 'C3'] <- 'Colorectal'
   df_ORCA$Cohort[df_ORCA$Cohort == 'C3B'] <- 'Colorectal'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'C4'] <- 'Colorectal'
   df_ORCA$Cohort[df_ORCA$Cohort == 'HF3'] <- 'Hip Fracture'
   df_ORCA$Cohort[df_ORCA$Cohort == 'HF3B'] <- 'Hip Fracture'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'HF4'] <- 'Hip Fracture'
   df_ORCA$Cohort[df_ORCA$Cohort == 'TJ3'] <- 'Total Joint'
   df_ORCA$Cohort[df_ORCA$Cohort == 'TJ3B'] <- 'Total Joint'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'TJ4'] <- 'Total Joint'
   df_ORCA$Cohort[df_ORCA$Cohort == 'G3'] <- 'Gynecology'
   df_ORCA$Cohort[df_ORCA$Cohort == 'G3B'] <- 'Gynecology'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'G4'] <- 'Gynecology'
+  df_ORCA$Cohort[df_ORCA$Cohort == 'EGS4'] <- 'EGS'
   
   p.service_line <- ggplot(df_ORCA) + geom_boxplot(aes(x=Cohort,y=Overall_ORCA)) + theme_light() +
     scale_x_discrete(name ="Service Line") +
@@ -110,7 +115,7 @@ get_ORCA_plot <- function(ORCA_file_C3, ORCA_file_C2) {
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_fill_brewer(palette = "Set1") + theme( legend.position = "bottom" ) +
     labs(title = 'Overall ORCA Scores by Service Line')
-
+  print(colnames(df_ORCA))
   ORCA_long <- gather(df_ORCA[ORCA_vars],key = 'ORCA_scale', value = 'Score')
   ORCA_long$ORCA_scale[ORCA_long$ORCA_scale == 'ORCA_6a'] <- 'Leadership culture'
   ORCA_long$ORCA_scale[ORCA_long$ORCA_scale == 'ORCA_6b'] <- 'Staff culture'
@@ -135,9 +140,14 @@ get_ORCA_plot <- function(ORCA_file_C3, ORCA_file_C2) {
   
   #Combine C2 and 3
   ORCA_long_C2$cohort <- '2'
-  ORCA_long$cohort <- '3'
+  # ORCA_long$cohort <- '3'
+  # print(colnames(ORCA_long))
+  # ORCA_long <- ORCA_long %>%
+  #   mutate(cohort = if_else(stringr::str_detect(Cohort, fixed(3)),'3','4'))
+  ORCA_long$cohort <- ifelse(grepl('3',ORCA_long$Cohort, fixed = TRUE), '3','4')
+  # print(table(ORCA_long$cohort))
   ORCA_long <- dplyr::bind_rows(ORCA_long, ORCA_long_C2)
-  ORCA_long$cohort <- ordered(ORCA_long$cohort, levels = c('2','3'))
+  ORCA_long$cohort <- ordered(ORCA_long$cohort, levels = c('2','3','4'))
   ORCA_long$ORCA_scale <- ordered(ORCA_long$ORCA_scale, levels = c('Overall ORCA', 'Leadership culture','Staff culture','Leadership practice','Evaluation / accountability','Opinion leader culture','Slack resources'))
   p.domain <- ggplot(ORCA_long) + geom_boxplot(aes(x=ORCA_scale, y=Score, fill = cohort)) + 
     scale_x_discrete(name ="ORCA Domain") +

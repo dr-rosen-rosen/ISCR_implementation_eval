@@ -19,7 +19,7 @@ barrier_figs <- get_barrier_plots(
   barrier_cat_file_C3 = file.path(here(),config$output_path,config$barrier_score_by_CATEGORY_by_time),
   barrier_cat_file_C2 = file.path(here(),config$output_path,config$OP_1_path,config$barrier_score_by_CATEGORY_by_time)
 )
-#show(barrier_figs$item)
+show(barrier_figs$item)
 show(barrier_figs$cat)
 
 HQI_fig <- get_HQI_plots(
